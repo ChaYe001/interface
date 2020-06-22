@@ -6,7 +6,7 @@ import time
 import datetime
 import numpy as np
 import codecs
-facefile = "D:\工作内容\测试记录\样本\模糊人脸\模糊人脸\si\\"
+facefile = "D:\工作内容\测试记录\G26\滑油盖测试集\summary\summary\负样本\\"
 piclist = os.listdir(facefile)
 f = codecs.open('data.txt',mode='r',encoding='utf-8')
 line = f.readlines()
@@ -23,7 +23,7 @@ for i in range(len(line)):
     #         # print(okname)
     #         if d == okname:
     #             print(d[0])
-    os.system('mv ' +facefile + str + ' ' + 'D:\工作内容\测试记录\样本\模糊人脸\模糊人脸\si\sanwu\\' +str)
+    os.system('mv ' +facefile + str + ' ' + 'D:\工作内容\测试记录\G26\滑油盖测试集\summary\summary\检测错误\\' +str)
 # def file_name(fileA_dir):
 #     L=[]
 #     for root, dirs, files in os.walk(file_dir):
