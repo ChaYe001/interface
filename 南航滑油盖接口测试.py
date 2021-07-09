@@ -52,6 +52,7 @@ def testinterface():
     global ERROR_NUM
     for pic in piclist:
         if pic.endswith('jpg'):
+            img = cv2.imdecode(np.fromfile(facefile + pic, dtype=np.uint8), -1)
 
             with open(facefile + pic, 'rb') as f:
                 image = f.read()
@@ -64,13 +65,29 @@ def testinterface():
                     res = json.loads(r.text)
                     # print(res)
                     code = str(res['code'])
+
+                    # print(points_x, points_y)
                     if code == '0':
                         code = '检测成功'
                         result = str(res['data']['result'])
+                        points_x = res['data']['points_x']
+                        points_y = res['data']['points_y']
                         if result == '0':
-                            result = '状态正确'
+                            result = 'OK'
+
                         else:
-                            result = '状态不正确'
+                            result = 'incorrect'
+                        # print(points_y[0])
+                        cv2.rectangle(img, (int(points_x[0]), int(points_y[0])), (int(points_x[1]), int(points_y[1])),
+                                      255, 2)
+                        cv2.putText(img, str(result), (points_x[0], points_y[1] - 7),
+                                    cv2.FONT_HERSHEY_COMPLEX, 0.6, 255, 1)
+
+                        cv2.imshow('123',img)
+                        key = cv2.waitKey(0)
+                        if key == 27:
+                            break
+                    cv2.destroyAllWindows()
                     if code == '1000':
                         code = "图片格式错误"
                         result = ''
@@ -78,15 +95,14 @@ def testinterface():
                         code = '检测不到'
                         result = ''
                     else:
-                        pass
+                        print(code)
 
                     print(pic + '_' + code + '_' + result)
-
                     if r.status_code != 200:
                         print(r.status_code)
                         ERROR_NUM += 1
                 except Exception as e:
-                    print(e)
+                    print("错误：" + str(e))
                     ERROR_NUM += 1
             if resizebuff == 0:
                 img = cv2.imdecode(np.fromfile(facefile + pic, dtype=np.uint8), -1)
@@ -106,27 +122,28 @@ def testinterface():
                         # code = str(r.text[14:18])
                         # print(r.text)
                         res = json.loads(r.text)
+                        print(res)
 
                         code = str(res['code'])
 
-                        # print(code)
-                        if code == '0':
-                            code = '检测成功'
-                            result = str(res['data']['result'])
-                            if result == '0':
-                                result = '状态正确'
-                            else:
-                                result = '状态不正确'
-                            # print(pic)
-                            # print(result)
-                        if code == '1000':
-                            code = "图片格式错误"
-                            result = ''
-                        elif code == '1001':
-                            code = '检测不到'
-                            result = ''
-                        else:
-                            pass
+                        # # print(code)
+                        # if code == '0':
+                        #     code = '检测成功'
+                        #     result = str(res['data']['result'])
+                        #     if result == '0':
+                        #         result = '状态正确'
+                        #     else:
+                        #         result = '状态不正确'
+                        #     # print(pic)
+                        #     # print(result)
+                        # if code == '1000':
+                        #     code = "图片格式错误"
+                        #     result = ''
+                        # elif code == '1001':
+                        #     code = '检测不到'
+                        #     result = ''
+                        # else:
+                        #     pass
 
                         print('resize_' + pic + '_' + code + '_' + result)
                         if r.status_code != 200:
@@ -162,26 +179,26 @@ def run():
         t.join()
     t2 = time.time()
 
-    # print("===============压测结果===================")
-    # # print("URL:", self.press_url)
-    # print("任务数量:", THREAD_NUM, "*", ONE_WORKER_NUM, "=", THREAD_NUM * ONE_WORKER_NUM)
-    # print("总耗时(秒):", t2 - t1)
-    # print("每次请求耗时(秒):", (t2 - t1) / (THREAD_NUM * ONE_WORKER_NUM))
-    # print("每秒承载请求数:", 1 / ((t2 - t1) / (THREAD_NUM * ONE_WORKER_NUM)))
-    # print("错误数量:", ERROR_NUM)
+#     print("===============压测结果===================")
+#     # print("URL:", self.press_url)
+#     print("任务数量:", THREAD_NUM, "*", ONE_WORKER_NUM, "=", THREAD_NUM * ONE_WORKER_NUM)
+#     print("总耗时(秒):", t2 - t1)
+#     print("每次请求耗时(秒):", (t2 - t1) / (THREAD_NUM * ONE_WORKER_NUM))
+#     print("每秒承载请求数:", 1 / ((t2 - t1) / (THREAD_NUM * ONE_WORKER_NUM)))
+#     print("错误数量:", ERROR_NUM)
 if __name__ == '__main__':
-    facefile = "D:\工作内容\测试记录\G26\滑油盖测试集\summary\summary\检测错误\\"
+    facefile = "D:\工作内容\搬家\\"
     piclist = os.listdir(facefile)
     print("===============新模型结果===================")
-    requestspath = 'http://39.96.62.131:48019/api/v1/object/status'
+    requestspath = 'http://39.96.62.131:48022/api/v1/object/status'
     resizebuff = 1
     THREAD_NUM = 1 # 并发线程总数
     ONE_WORKER_NUM = 1  # 每个线程的循环次数
-    LOOP_SLEEP = 0.1  # 每次请求时间间隔(秒)
+    LOOP_SLEEP = 0.2  # 每次请求时间间隔(秒)
     ERROR_NUM = 0  # 出错数
     # obj = Presstest(login_url=login_url, press_url=press_url, phone=phone, password=password)
     # testinterface()
     run()
-    print("===============旧模型结果===================")
-    requestspath = 'http://39.96.62.131:48021/api/v1/object/status'
-    run()
+    # print("===============旧模型结果===================")
+    # requestspath = 'http://39.96.62.131:48021/api/v1/object/status'
+    # run()

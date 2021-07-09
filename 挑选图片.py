@@ -24,6 +24,7 @@ for i in range(len(line)):
     #         if d == okname:
     #             print(d[0])
     os.system('mv ' +facefile + str + ' ' + 'D:\工作内容\测试记录\G26\滑油盖测试集\summary\summary\检测错误\\' +str)
+    os.system('mv ' + facefile + str + ' ' + 'C:\Work\G40\腾讯手势\手势采集图库\确认\\NotFind\\' + str)
 # def file_name(fileA_dir):
 #     L=[]
 #     for root, dirs, files in os.walk(file_dir):
